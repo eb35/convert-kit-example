@@ -15,16 +15,17 @@ const SubscribeForm = () => {
 
 		const formData = new FormData(e.currentTarget);
 		const formInputs = Object.fromEntries(formData);
-		
+		const { email } = formInputs;
+
 		// email exists
-		if (!formInputs?.email) {
+		if (!email) {
 			return toast.error("Please provide an email address", {
 				id: subToast,
 			});
 		}
 
 		//validate email
-		if (!validateEmail((formInputs.email as string).trim())) {
+		if (!validateEmail((email as string).trim())) {
 			return toast.error("Please provide a valid email address", {
 				id: subToast,
 			});
@@ -33,13 +34,14 @@ const SubscribeForm = () => {
 		try {
 			const res = await fetch("/api/subscribe.json", {
 				method: "POST",
-				body: JSON.stringify(""),
+				body: JSON.stringify(formInputs),
 				headers: {
 					"Content-Type": "application/json",
 				},
 			});
 			if (!res.ok) {
-				throw new Error("Yikes");
+				console.log(res);
+				throw new Error(res.statusText);
 			}
 
 			const successMessage = await res.json();
